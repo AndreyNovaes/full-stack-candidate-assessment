@@ -4,7 +4,7 @@ from ..Generate_urls import Generate_urls
 
 class MeliSpiderSpider(scrapy.Spider):
   name = "meli"
-
+# mudança para push de teste
   instancia_generate_urls = Generate_urls()
   categories = [
     '/eletrodomesticos/refrigeracao/geladeiras/geladeira',
