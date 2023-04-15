@@ -32,20 +32,19 @@ class SaveToDatabasePipeline:
     self.cur = self.conn.cursor()
 
   def open_spider(self, spider):
-    self.cur.execute("CREATE TABLE IF NOT EXISTS scrapped_data (id TEXT PRIMARY KEY,category TEXT, description TEXT, price TEXT, image TEXT, link TEXT)")
+    self.cur.execute("CREATE TABLE IF NOT EXISTS scrapped_data (id TEXT PRIMARY KEY,category TEXT, description TEXT, price REAL, image TEXT, link TEXT, website TEXT)")
     self.conn.commit()
   
   def process_item(self, item, spider):
     self.cur.execute(""" SELECT * FROM scrapped_data
-        WHERE category = ? AND description = ? AND price = ? AND image = ? AND link = ?
-        """, (item['category'], item['description'], item['price'], item['image'], item['link']))
+        WHERE category = ? AND description = ? AND price = ? AND image = ? AND link = ? AND website = ?
+        """, (item['category'], item['description'], item['price'], item['image'], item['link'], item['website']))
     result = self.cur.fetchone()
     if result:
       raise DropItem("Elemento duplicado, excluido antes de salvar no banco de dados")
     else:
-      # salvo o meu elemento único baseado no link do produto
       id = str(uuid.uuid4())
-      self.cur.execute("INSERT INTO scrapped_data VALUES (?, ?, ?, ?, ?, ?)", (id, item['category'], item['description'], item['price'], item['image'], item['link']))
+      self.cur.execute("INSERT INTO scrapped_data VALUES (?, ?, ?, ?, ?, ?, ?)", (id, item['category'], item['description'], item['price'], item['image'], item['link'], item['website']))
       self.conn.commit()
       return item
   
