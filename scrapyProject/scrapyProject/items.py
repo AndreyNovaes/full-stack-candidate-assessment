@@ -7,3 +7,4 @@ class ScrapyprojectItem(scrapy.Item):
   price = scrapy.Field()
   image = scrapy.Field()
   link = scrapy.Field()
+  website = scrapy.Field()
