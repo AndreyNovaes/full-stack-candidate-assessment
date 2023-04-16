@@ -9,27 +9,11 @@ load_dotenv()
 # remove os elementos que não possuem os valores necessários
 class ScrapyprojectPipeline:
   def process_item(self, item, spider):
-    if not item['description'] or not item['price'] or not item['image'] or not item['link'] or not item['category']:
-      raise DropItem("Missing values!, item dropped")
+    if not item['description'] or not item['price'] or not item['image'] or not item['link'] or not item['category'] or not item['website']:
+      raise DropItem("item dropado por não possuir os valores necessários")
     else:
-      return item
-
-# remove os elementos duplicados em suspensão(em memória) antes de salvar no banco de dados
-class RemoveDuplicatesBeforeSaveDatabasePipeline:
-  def __init__(self):
-    self.scraped_data_set = set()
-  
-  def process_item(self, item, spider):
-    if item['description'] in self.scraped_data_set and \
-       item['price'] in self.scraped_data_set and \
-       item['image'] in self.scraped_data_set and \
-       item['link'] in self.scraped_data_set:
-      raise DropItem("Elemento duplicado, excluido antes de salvar no banco de dados")
-    else:
-      self.scraped_data_set.add(item['description'])
       return item
     
-# salva no banco de dados todos os elementos que passaram pelos 2 primeiros pipelines
 class SaveToDatabasePipeline:
     def __init__(self):
         database_url = os.getenv("DATABASE_URL")
@@ -51,21 +35,25 @@ class SaveToDatabasePipeline:
         self.conn.commit()
 
     def process_item(self, item, spider):
+      self.cur.execute("""
+        SELECT id FROM scrapped_data
+        WHERE category = %s AND description = %s AND website = %s AND image = %s
+      """, (item['category'], item['description'], item['website'], item['image']))
+      productAlreadyExists = self.cur.fetchone()
+      spider.logger.info(f"productAlreadyExists: {productAlreadyExists}")
+
+      if productAlreadyExists is None:
+        id = str(uuid.uuid4())
         self.cur.execute("""
-            SELECT * FROM scrapped_data
-            WHERE category = %s AND description = %s AND price = %s AND image = %s AND link = %s AND website = %s
-        """, (item['category'], item['description'], item['price'], item['image'], item['link'], item['website']))
-        result = self.cur.fetchone()
-        if result:
-            raise DropItem("Elemento duplicado, excluido antes de salvar no banco de dados")
-        else:
-            id = str(uuid.uuid4())
-            self.cur.execute("""
-                INSERT INTO scrapped_data (id, category, description, price, image, link, website)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (id, item['category'], item['description'], item['price'], item['image'], item['link'], item['website']))
-            self.conn.commit()
-            return item
+          INSERT INTO scrapped_data (id, category, description, price, image, link, website)
+          VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (id, item['category'], item['description'], item['price'], item['image'], item['link'], item['website']))
+        self.conn.commit()
+        spider.logger.info(f"Item inserted: {item['description']}")
+      else:
+        spider.logger.info(f"Duplicate item found, removing from memory...")
+
+      return item
 
     def close_spider(self, spider):
         self.conn.close()
