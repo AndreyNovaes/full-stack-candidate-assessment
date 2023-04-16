@@ -6,7 +6,7 @@ class BuscapeSpider(scrapy.Spider):
   name = "buscape"
   instancia_generate_urls = Generate_urls()
   
-  start_urls = instancia_generate_urls.generate_urls_buscape(["celular", "geladeira", 'tv'], 2)
+  start_urls = instancia_generate_urls.generate_urls_buscape(["celular", "geladeira", 'tv'], 50)
 
   def parse(self, response):
     products = response.css(".SearchCard_ProductCard_Inner__7JhKb")
