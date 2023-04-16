@@ -1,5 +1,4 @@
 import scrapy
-# from itemloaders.processors import TakeFirst, MapCompose, Join
 
 class ScrapyprojectItem(scrapy.Item):
   category = scrapy.Field()

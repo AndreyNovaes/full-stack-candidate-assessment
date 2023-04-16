@@ -14,7 +14,6 @@ USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/1
 
 ITEM_PIPELINES = {
     "scrapyProject.pipelines.ScrapyprojectPipeline": 100,
-    "scrapyProject.pipelines.RemoveDuplicatesBeforeSaveDatabasePipeline": 200,
     "scrapyProject.pipelines.SaveToDatabasePipeline": 300,
 }
 

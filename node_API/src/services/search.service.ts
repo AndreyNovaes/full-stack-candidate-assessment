@@ -4,8 +4,6 @@ export async function getSearchProductsService(website?: string, category?: stri
   let query = "SELECT * FROM scrapped_data WHERE 1 = 1";
   const queryParams = [];
 
-  console.log({ website, category, search});
-
   if (website) {
     query += " AND website = $" + (queryParams.length + 1);
     queryParams.push(website);
@@ -22,7 +20,6 @@ export async function getSearchProductsService(website?: string, category?: stri
   }
 
   try {
-    console.log("Query:", query, queryParams);
     const { rows } = await poolConnectionClient.query(query, queryParams);
     return rows;
   } catch (error) {

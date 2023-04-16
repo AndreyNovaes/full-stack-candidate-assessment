@@ -5,7 +5,6 @@ from ..Generate_urls import Generate_urls
 
 class MeliSpiderSpider(scrapy.Spider):
   name = "meli"
-# mudança para push de teste
   instancia_generate_urls = Generate_urls()
   categories = [
     '/eletrodomesticos/refrigeracao/geladeiras/geladeira',
@@ -13,8 +12,7 @@ class MeliSpiderSpider(scrapy.Spider):
     '/eletronicos-audio-video/televisores/tv'
     ]
   
-  print(instancia_generate_urls.generate_urls_meli(categories, 2))
-  start_urls = instancia_generate_urls.generate_urls_meli(categories, 2)
+  start_urls = instancia_generate_urls.generate_urls_meli(categories, 50)
 
   def parse(self, response):
     products = response.xpath('//li[contains(@class, "ui-search-layout__item")]')
