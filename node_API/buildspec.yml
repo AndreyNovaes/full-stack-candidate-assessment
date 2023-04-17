@@ -1,5 +1,3 @@
-version: 0.2
-
 phases:
   pre_build:
     commands:
@@ -17,5 +15,3 @@ artifacts:
   base-directory: '.'
   files:
     - '**/*'
-image:
-  name: aws/codebuild/standard:5.0
