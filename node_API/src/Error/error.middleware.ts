@@ -25,7 +25,7 @@ const errorMiddleware: ErrorMiddleware = (err, req, res, next) => {
     }
     next(err);
   } catch (error) {
-    console.error(
+    console.log(
       "Deu problema no middleware de error:, output:",
       error
     );
