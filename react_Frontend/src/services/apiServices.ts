@@ -13,7 +13,9 @@ export const getWebsites = async () => {
 export const getSearch = async (
   category?: string,
   website?: string,
-  searchValue?: string
+  searchValue?: string,
+  page?: number,
+  limit?: number
 ) => {
   try {
     let queryString = "";
@@ -28,6 +30,14 @@ export const getSearch = async (
 
     if (searchValue) {
       queryString += `search=${encodeURIComponent(searchValue)}&`;
+    }
+
+    if (page) {
+      queryString += `page=${encodeURIComponent(page)}&`;
+    }
+
+    if (limit) {
+      queryString += `limit=${encodeURIComponent(limit)}&`;
     }
 
     queryString = queryString.slice(0, -1);
